@@ -2,6 +2,8 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import os
+import requests
 
 # =========================
 # PAGE CONFIG
@@ -17,95 +19,38 @@ st.set_page_config(
 # =========================
 st.markdown("""
 <style>
-
-/* MAIN BACKGROUND */
-[data-testid="stAppViewContainer"] {
-    background-color: #e8f8f5; /* pastel green */
-}
-
-/* SIDEBAR */
-[data-testid="stSidebar"] {
-    background-color: #ffe4ec; /* pastel pink */
-}
-
-/* TITLE */
-.title {
-    text-align: center;
-    font-size: 55px;
-    font-weight: bold;
-    color: #ff85a2;
-}
-
-/* SUBTITLE */
-.subtitle {
-    text-align: center;
-    color: #a88fac;
-    font-size: 26px;
-}
-
-/* RESULT BOX */
-.result-box {
-    padding: 20px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #ffd6e0, #e0f7f4);
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #5a5a5a;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-}
-
-/* BUTTON */
-.stButton>button {
-    background-color: #ffcad4;
-    color: #5a5a5a;
-    border-radius: 12px;
-    height: 3em;
-    width: 100%;
-    font-size: 18px;
-    border: none;
-}
-
-.stButton>button:hover {
-    background-color: #f4acb7;
-}
-
-/* SIDEBAR TITLE */
-[data-testid="stSidebar"] h1 {
-    font-size: 32px !important;
-    color: #ff6f91;
-}
-
-/* SIDEBAR MENU */
-[data-testid="stSidebar"] label {
-    font-size: 22px !important;
-}
-
-/* GRID CARDS */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-}
-.card {
-    background: linear-gradient(135deg, #ffd6e0, #e0f7f4);
-    padding: 12px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: #5a5a5a;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-}
+[data-testid="stAppViewContainer"] { background-color: #e8f8f5; }
+[data-testid="stSidebar"] { background-color: #ffe4ec; }
+.title { text-align: center; font-size: 55px; font-weight: bold; color: #ff85a2; }
+.subtitle { text-align: center; color: #a88fac; font-size: 26px; }
+.result-box { padding: 20px; border-radius: 20px; background: linear-gradient(135deg, #ffd6e0, #e0f7f4); text-align: center; font-size: 22px; font-weight: bold; color: #5a5a5a; box-shadow: 0px 4px 12px rgba(0,0,0,0.1);}
+.stButton>button { background-color: #ffcad4; color: #5a5a5a; border-radius: 12px; height: 3em; width: 100%; font-size: 18px; border: none;}
+.stButton>button:hover { background-color: #f4acb7;}
+.grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.card { background: linear-gradient(135deg, #ffd6e0, #e0f7f4); padding: 12px; border-radius: 15px; text-align: center; font-size: 14px; font-weight: bold; color: #5a5a5a; box-shadow: 0px 2px 6px rgba(0,0,0,0.1);}
 </style>
 """, unsafe_allow_html=True)
+
+# =========================
+# DOWNLOAD MODEL DARI GOOGLE DRIVE
+# =========================
+MODEL_PATH = "trained_model.keras"
+MODEL_FILE_ID = "GANTI_DENGAN_FILE_ID_KAMU"  # <-- ganti dengan file ID Google Drive
+
+if not os.path.exists(MODEL_PATH):
+    st.info("Downloading trained model... 🌸")
+    URL = f"https://drive.google.com/uc?export=download&id={MODEL_FILE_ID}"
+    r = requests.get(URL)
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
+    st.success("Model downloaded ✅")
 
 # =========================
 # LOAD MODEL
 # =========================
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("trained_model.keras")
+    return tf.keras.models.load_model(MODEL_PATH)
 
 # =========================
 # PREDICTION FUNCTION
@@ -139,8 +84,6 @@ if app_mode == "🏠 HOME":
 elif app_mode == "📘 ABOUT":
     st.markdown("## 📘 About This Project")
     st.markdown("### 📊 DATASET")
-
-    # Fruits
     st.markdown("#### 🍓 Fruits")
     fruits_html = """
     <div class="grid-container">
@@ -158,7 +101,6 @@ elif app_mode == "📘 ABOUT":
     """
     st.markdown(fruits_html, unsafe_allow_html=True)
 
-    # Vegetables
     st.markdown("#### 🥕 Vegetables")
     vegetables_html = """
     <div class="grid-container">
@@ -172,27 +114,12 @@ elif app_mode == "📘 ABOUT":
         <div class="card">🌱 Radish</div>
         <div class="card">🍠 Beetroot</div>
         <div class="card">🥬 Cabbage</div>
-        <div class="card">🥗 Lettuce</div>
-        <div class="card">🌿 Spinach</div>
-        <div class="card">🌱 Soy Bean</div>
-        <div class="card">🥦 Cauliflower</div>
-        <div class="card">🫑 Bell Pepper</div>
-        <div class="card">🌶️ Chilli Pepper</div>
-        <div class="card">🥔 Turnip</div>
-        <div class="card">🌽 Corn</div>
-        <div class="card">🌽 Sweetcorn</div>
-        <div class="card">🍠 Sweet Potato</div>
-        <div class="card">🌶️ Paprika</div>
-        <div class="card">🌶️ Jalapeño</div>
-        <div class="card">🫚 Ginger</div>
-        <div class="card">🧄 Garlic</div>
-        <div class="card">🌱 Peas</div>
-        <div class="card">🍆 Eggplant</div>
     </div>
     """
     st.markdown(vegetables_html, unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     # Data Split
     st.markdown("### 📊 DATA SPLIT")
     c1, c2, c3 = st.columns(3)
@@ -207,7 +134,6 @@ elif app_mode == "🔮 PREDICT":
     st.markdown("## 🔍 Upload Your Image")
     test_image = st.file_uploader("📤 Choose an image", type=["jpg","png","jpeg"])
 
-    # Inisialisasi session_state untuk tombol
     if "predicted_once" not in st.session_state:
         st.session_state.predicted_once = False
 
@@ -216,16 +142,13 @@ elif app_mode == "🔮 PREDICT":
         with col1:
             st.image(test_image, caption="Your Image 🧁", use_container_width=True)
 
-        # Tombol Predict Now permanen disable setelah sekali klik
         predict_btn = st.button(
-            "✨ Predict Now", 
+            "✨ Predict Now",
             disabled=st.session_state.predicted_once
         )
 
         if predict_btn:
-            # Set flag supaya tombol tidak bisa diklik lagi
             st.session_state.predicted_once = True
-
             with st.spinner("🌸 Thinking..."):
                 probs = model_prediction(test_image)
                 with open("labels.txt") as f:
