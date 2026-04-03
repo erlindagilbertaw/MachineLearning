@@ -35,7 +35,7 @@ st.markdown("""
 # DOWNLOAD MODEL DARI GOOGLE DRIVE
 # =========================
 MODEL_PATH = "trained_model.keras"
-MODEL_FILE_ID = "GANTI_DENGAN_FILE_ID_KAMU"  # <-- ganti dengan file ID Google Drive
+MODEL_FILE_ID = "1knF24_RjQUsjVsrRDBQ66mIBe9eu6aam"  # <-- ganti dengan file ID Google Drive
 
 if not os.path.exists(MODEL_PATH):
     st.info("Downloading trained model... 🌸")
